@@ -26,9 +26,9 @@ By the end you can:
 ensemble-workshop/
 ├── README.md                          # this file: setup, tutorial, expected results, troubleshooting
 ├── requirements.txt
-├── sst_models.py                      # the two network architectures, checkpoint loading and the metric
+├── sst_models.py                      # the two network architectures, checkpoint loading and metrics
 ├── checkpoints/                       # six trained networks: 2 architectures × 3 seeds
-├── data/validation.npz                # competition validation split (728 examples, 2022–2023)
+├── data/validation.npz                # competition validation split (728 examples, 2022-2023)
 ├── notebooks/
 │   ├── 01_tutorial_ocean_ensemble.ipynb   # START HERE: the hands-on tutorial
 │   └── 02_other_ensemble_methods.ipynb    # then: bagging, boosting, stacking in scikit-learn
@@ -44,8 +44,7 @@ inside the `ensemble-workshop` folder:
 # macOS and Linux
 python3.12 -m venv .venv
 source .venv/bin/activate
-pip install -r requirements.txt        # downloads PyTorch, about 200 MB
-jupyter lab                            # or open the notebook in VS Code and pick the .venv kernel
+pip install -r requirements.txt
 ```
 
 ```powershell
@@ -53,7 +52,6 @@ jupyter lab                            # or open the notebook in VS Code and pic
 py -3.12 -m venv .venv
 .venv\Scripts\Activate.ps1
 pip install -r requirements.txt
-jupyter lab
 ```
 
 On Windows, if PowerShell refuses to run `Activate.ps1`, run `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned`
@@ -149,27 +147,19 @@ ensemble = np.mean(preds, axis=0)
 # then add a second, different architecture the same way
 ```
 
-With scikit-learn models, `VotingRegressor` and `VotingClassifier` average different models for you. Checklist: report
-the mean ± spread over seeds rather than one run; average 3 to 5 seeds; add a second, different model; fix the weights
+With scikit-learn models, `VotingRegressor` and `VotingClassifier` average different models for you. Checklist: report  
+the mean ± spread over seeds rather than one run; average 3 to 5 seeds; add a second, different model; fix the weights  
 before you look at the validation score; check the error correlation before adding a member.
-
-## Going further (optional)
-
-* **Bonus sections B1–B5** at the end of the tutorial notebook: lucky pairs, all 63 subsets, tuning the weight honestly,
-the ambiguity decomposition, and where on the map the ensemble helps.
-* **More to try in notebook 02**: change the label noise, drop the neural net from the stack, or set
-`max_features=None` in the random forest (which turns it back into plain bagging).
 
 ## Troubleshooting
 
-| You see | Likely cause | Fix |
-|---|---|---|
-| `ModuleNotFoundError: No module named 'torch'` (or `sst_models`) | The notebook runs on a different Python than your `.venv` | In Jupyter or VS Code, choose the `.venv` kernel; or start `jupyter lab` from a terminal where the `.venv` is activated |
-| `AssertionError: Checkpoints not found` or `FileNotFoundError: ../data/validation.npz` | The notebook's working folder is not `notebooks/` | Start Jupyter inside `ensemble-workshop` and open the notebook from the file browser, so paths like `../checkpoints` resolve |
-| `ERROR: No matching distribution found for torch==2.2.2` | Python 3.13 or newer | Create the `.venv` with Python 3.12, or install a newer torch without the version pin |
-| `RuntimeError: Numpy is not available` | NumPy 2 installed next to torch 2.2 | `pip install "numpy<2"`, then restart the kernel |
-| Step 2 seems stuck | Running six networks takes about 30 seconds on a CPU | Wait for the six lines to print |
-| Your numbers differ in the 4th decimal | Different CPU or library versions | Fine: within ±0.0005 counts as a match |
+| You see                                                                                | Likely cause                                              | Fix                                                                                                                      |
+| -------------------------------------------------------------------------------------- | --------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| `ModuleNotFoundError: No module named 'torch'` (or `sst_models`)                       | The notebook runs on a different Python than your `.venv` | In your IDE, choose the `.venv` kernel (Select Kernel, top right of the notebook)                                        |
+| `AssertionError: Checkpoints not found` or `FileNotFoundError: ../data/validation.npz` | The notebook's working folder is not `notebooks/`         | Open the `ensemble-workshop` folder in your IDE and open the notebook from there, so paths like `../checkpoints` resolve |
+| `ERROR: No matching distribution found for torch==2.2.2`                               | Python 3.13 or newer                                      | Create the `.venv` with Python 3.12, or install a newer torch without the version pin                                    |
+| `RuntimeError: Numpy is not available`                                                 | NumPy 2 installed next to torch 2.2                       | `pip install "numpy<2"`, then restart the kernel                                                                         |
+| Step 2 seems stuck                                                                     | Running six networks takes about 30 seconds on a CPU      | Wait for the six lines to print                                                                                          |
 
 Still stuck: read the full error, find the first cell that failed, and check its inputs (paths, the kernel, the shapes
 printed in step 1) before changing anything else.
@@ -185,15 +175,3 @@ printed in step 1) before changing anything else.
 | **All six, 50/50** | **0.2685** | 0.1474 / 0.2770 / 0.3811 |
 
 Kaggle public score: 0.27419 for the ensemble, vs 0.28150 for the best single TCN.
-
-## Sources and credits
-
-* Data: EGR 444 sea-surface temperature forecasting competition (validation split, 2022–2023).
-* Models, checkpoints and notebooks: our team's competition code.
-* [scikit-learn user guide: Ensembles](https://scikit-learn.org/stable/modules/ensemble.html).
-* Lakshminarayanan, Pritzel & Blundell, [Simple and Scalable Predictive Uncertainty Estimation using Deep Ensembles](https://arxiv.org/abs/1612.01474), NeurIPS 2017.
-* Krogh & Vedelsby, *Neural Network Ensembles, Cross Validation, and Active Learning*, NIPS 7, 1995.
-* Hastie, Tibshirani & Friedman, [The Elements of Statistical Learning](https://hastie.su.domains/ElemStatLearn/), chapters 8, 10, 15 and 16.
-* Breiman, *Bagging Predictors*, Machine Learning, 1996 · Friedman, *Greedy Function Approximation: A Gradient Boosting Machine*, Annals of Statistics, 2001 · Wolpert, *Stacked Generalization*, Neural Networks, 1992.
-* Francis Galton, *Vox Populi*, Nature, 1907 (the ox-weighing story).
-* Libraries: PyTorch, NumPy, pandas, scikit-learn, Matplotlib, Jupyter.
