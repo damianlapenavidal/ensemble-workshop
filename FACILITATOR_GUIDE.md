@@ -35,7 +35,7 @@ Both presenters must still be able to explain every step and fix every row of th
 |---|---|---|---|---|---|
 | Before 0:00 | People arrive: start the install | 9 on screen | | Damian | Cyril |
 | 0:00–3:00 | Intro: project need, finished result, agenda | 1–4 | | **Damian** | |
-| 3:00–7:30 | Key idea: ox poll, formula, the toolbox | 5–8 | | **Cyril** | Damian checks installs |
+| 3:00–7:30 | Key idea: ox story, formula, the toolbox | 5–8 | | **Cyril** | Damian checks installs |
 | 7:30–9:30 | Checkpoint 0: setup check | 9–10 | 01, step 0 | **Damian** | Cyril |
 | 9:30–22:00 | Tutorial: steps 1–5 and the two-knobs recap | 11–16 | 01, steps 1–5 | **Damian** | Cyril |
 | 22:00–27:00 | Your turn: three trainings, two people share | 17 | 01, step 6 | **Damian** | Cyril |
@@ -44,7 +44,7 @@ Both presenters must still be able to explain every step and fix every row of th
 | 38:00–40:00 | Sources, takeaways, questions | 26–27 | | both | |
 | 40:00–45:00 | Buffer: stragglers, extra questions, bonus sections | | 01, B1–B5 | both | both |
 
-If you fall behind: shorten the ox poll to one minute; on slide 22 Cyril runs notebook 02 as a demo instead of
+If you fall behind: on slide 22 Cyril runs notebook 02 as a demo instead of
 waiting for everyone; summarize slide 24 in one sentence. Never cut checkpoint 0 or the Your turn on slide 17.
 
 ## 3. Speaker notes
@@ -54,7 +54,7 @@ Slide numbers refer to `slides/ensemble-workshop.pptx`. These are talking points
 ### Damian · Intro (slides 1–4)
 
 **Before 0:00, slide 9 on screen.** "While you settle in, open a terminal in the ensemble-workshop folder and run
-these four commands. The install takes a few minutes, so start it now." Then go back to slide 1.
+the commands for your system (macOS and Linux, or Windows). The install takes a few minutes, so start it now." Then go back to slide 1.
 
 **1 · Cover.** "For the next 40 minutes you are our teammates on the ocean-forecasting project. Cyril and I found a
 method that made our forecasts more reliable, and we want everyone on the team to be able to use it." Ensembling means
@@ -74,8 +74,9 @@ anyone who falls behind can still follow. Hand over: "Cyril, why does this work 
 
 ### Cyril · Key idea (slides 5–8)
 
-**5 · Ox poll.** 20 seconds to write a guess. Ask two or three people out loud. "Will the crowd's middle guess beat
-yours?"
+**5 · The ox story.** No poll: with 10 of us, a class "crowd" is too small to show the effect. Tell the story in 30
+seconds: at a 1906 fair, 787 people each guessed the ox's weight on their own, butchers and farmers among them. Ask the
+question on the slide out loud, let it hang for a second, then go to the answer.
 
 **6 · The answer.** Median 1,207 lb, actual 1,198 lb: under 1% off, better than almost every individual, including
 the cattle experts. The condition that matters: people guessed *independently*, so their errors pointed in different
@@ -84,7 +85,10 @@ directions and cancelled.
 **7 · The formula.** M models, each with error variance σ², and ρ is how similar their mistakes are. More models
 shrink only the second term; ρσ² never goes away. Ten independent models keep 10% of the variance, ten models with
 ρ = 0.7 keep 73%, ten copies keep 100%. "So the goal is good models that make different mistakes. Damian will measure
-ρ on our real models in step 5."
+ρ on our real models in step 5." Point at the bars: orange is the shared part, which stays at the same height however
+many models we add; blue is the individual part, which shrinks with M, so the bars settle onto the orange floor. Then
+the left chart, for ρ = 0.7 (models that mostly agree): the floor is much higher and the bars barely drop, so averaging
+helps least when ρ is high.
 
 **8 · The toolbox.** Five classic ways to get models that disagree. "The top two are what our project uses, and
 Damian walks you through them next. The bottom three, bagging, boosting and stacking, are mine: we come back to them
@@ -104,7 +108,8 @@ Python 3.13, NumPy 2.
 **11 · Step 1, load the data.** "This is the competition task." Input: 14 daily sea-temperature maps on a 12 × 14
 grid; output: the next 3 days; score: RMSE over the 143 ocean cells. Read the shapes out loud: examples, days,
 latitude, longitude. Persistence, "tomorrow looks like today", scores 0.3075 and is surprisingly hard to beat; our
-networks predict a correction to it. **Checkpoint 1.**
+networks predict a correction to it. From here on, every score prints day 1, day 2, day 3 and their mean (the
+competition score). Error grows with each day ahead. **Checkpoint 1.**
 
 **12 · Step 2, six networks.** Our two finalists after a lot of grid searches. The flattened TCN reads each day's map
 as one long vector, so it sees the whole box. The spatial TCN treats each day like an image, then runs one small TCN
@@ -115,12 +120,14 @@ hyperparameter with it; the honest single-model score is about 0.278. **Checkpoi
 **13 · Step 3, deep ensemble.** "First method we used." The seed decides the starting weights, the batch order and
 the dropout masks, so each run lands on a different, equally good solution and makes slightly different mistakes.
 `np.mean(..., axis=0)` averages three forecasts cell by cell. A single run is about 0.278; three seeds give 0.2738
-and 0.2743, about 0.004 better for free. **Checkpoint 3.**
+and 0.2743, about 0.004 better for free. **Checkpoint 3.** Then the day columns: the means tie (0.2738 vs 0.2743), but
+spatial wins day 1 and flattened wins day 3. Spatial reads local patterns, which drive tomorrow; flattened sees the
+whole box, which matters further ahead. Two models good at different days: that is what made us try averaging them.
 
 **14 · Step 4, averaging.** "Second method." Average the two seed-averages 50/50. For numbers, voting is just the
 mean; for classes you would count votes or average probabilities. We fixed 50/50 before looking at validation, so the
 score stays honest. Result: 0.2685, better than every single run on every forecast day, and 0.27419 on Kaggle.
-**Checkpoint 4.**
+**Checkpoint 4.** Point at the days: the average keeps spatial's strong day 1 and flattened's strong day 3.
 
 **15 · Step 5, why mixing wins.** "This is Cyril's formula on our data." ρ between seeds of the same network: 0.963.
 Between the two architectures: 0.898. Lower ρ means a bigger gain, which is why step 4 gained more than step 3. All

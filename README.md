@@ -41,11 +41,23 @@ You need **Python 3.12** (3.10 or 3.11 also work; 3.13 does not support `torch==
 inside the `ensemble-workshop` folder:
 
 ```bash
+# macOS and Linux
 python3 -m venv .venv
-source .venv/bin/activate              # Windows PowerShell: .venv\Scripts\Activate.ps1
+source .venv/bin/activate
 pip install -r requirements.txt        # downloads PyTorch, about 200 MB
 jupyter lab                            # or open the notebook in VS Code and pick the .venv kernel
 ```
+
+```powershell
+# Windows (PowerShell)
+py -3.12 -m venv .venv
+.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+jupyter lab
+```
+
+On Windows, if PowerShell refuses to run `Activate.ps1`, run `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned`
+once and try again.
 
 Then open `notebooks/01_tutorial_ocean_ensemble.ipynb` and run the cells from top to bottom with **Shift + Enter**.
 Both notebooks are saved **with their outputs**, so you can compare yours at any time, or simply read along.
@@ -54,13 +66,16 @@ Both notebooks are saved **with their outputs**, so you can compare yours at any
 
 The notebook walks through these steps. After each one, compare your output with the checkpoint.
 
+Every score in notebook 01 is printed for each forecast day (day 1, day 2, day 3) and as their mean, which is the
+competition score.
+
 | Step | What you do | Why it matters | ✅ Checkpoint |
 |---|---|---|---|
 | 0 | Setup check: import the libraries and find the checkpoints | Confirms your environment before anything else | `torch 2.2.2, 6 checkpoints found`, `Setup OK` |
-| 1 | Load the validation data and score the persistence baseline | Shapes of the input and target; the score every model must beat | `X: (728, 14, 12, 14)`, `y: (728, 3, 12, 14)`, persistence `0.3075` |
-| 2 | Run the six trained networks | Shows seed luck: same code, different scores | six forecasts of shape `(728, 3, 12, 14)`, scores `0.2747` to `0.2805` |
-| 3 | **Deep ensemble:** average the 3 seeds of each architecture | Averaging cancels run-to-run luck | `tcn 0.2738`, `spatial_tcn 0.2743` |
-| 4 | **Averaging:** combine the two architectures 50/50 | Different models make different mistakes | `all six, 50/50: 0.2685` |
+| 1 | Load the validation data and score the persistence baseline | Shapes of the input and target; the score every model must beat | `X: (728, 14, 12, 14)`, `y: (728, 3, 12, 14)`, persistence days `0.1792 / 0.3171 / 0.4262`, mean `0.3075` |
+| 2 | Run the six trained networks | Shows seed luck, and that each architecture is better on a different forecast day | six forecasts of shape `(728, 3, 12, 14)`, means `0.2747` to `0.2805`; spatial wins day 1, flattened wins day 3 |
+| 3 | **Deep ensemble:** average the 3 seeds of each architecture | Averaging cancels run-to-run luck | `tcn × 3 seeds` mean `0.2738`, `spatial_tcn × 3 seeds` mean `0.2743` |
+| 4 | **Averaging:** combine the two architectures 50/50 | Different models make different mistakes, here on different days | `all six, 50/50` days `0.1474 / 0.2770 / 0.3811`, mean `0.2685` |
 | 5 | Measure the error correlation ρ between the models | Explains why step 4 gained more than step 3 | `0.963` same architecture, `0.898` different |
 | 6 | **Your turn** (below) | Use the method on a new question | your score and its rank out of 20 |
 
