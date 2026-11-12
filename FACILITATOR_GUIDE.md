@@ -132,7 +132,9 @@ score stays honest. Result: 0.2685, better than every single run on every foreca
 **15 · Step 5, why mixing wins.** "This is Cyril's formula on our data." ρ between seeds of the same network: 0.963.
 Between the two architectures: 0.898. Lower ρ means a bigger gain, which is why step 4 gained more than step 3. All
 the correlations are high because most of the error is weather that no model saw coming; no ensemble removes that.
-**Checkpoint 5.**
+**Checkpoint 5.** Then the scale: ρ runs from −1 (opposite errors, they cancel, green) to +1 (identical errors, nothing
+cancels, red). Both of our marks sit at the far right; the cross-architecture one is a little further left, so it cancels
+a little more.
 
 **16 · Two knobs.** Down is more seeds, which removes luck. Right is more architectures, which adds diversity. Ask
 the room: "Which knob gained more?" (Architectures.)
