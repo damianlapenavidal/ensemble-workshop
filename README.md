@@ -42,7 +42,7 @@ inside the `ensemble-workshop` folder:
 
 ```bash
 # macOS and Linux
-python3 -m venv .venv
+python3.12 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt        # downloads PyTorch, about 200 MB
 jupyter lab                            # or open the notebook in VS Code and pick the .venv kernel
@@ -89,8 +89,10 @@ Results can differ in the 4th decimal on another CPU or library version. Within 
 **Scenario.** Your team has compute for only three training runs. Which three of the six models would you ensemble?
 
 1. In step 6 of the notebook, edit `my_pick` to any 3 of `("tcn", 444)`, `("tcn", 445)`, `("tcn", 446)`,
+
    `("spatial_tcn", 444)`, `("spatial_tcn", 445)` and `("spatial_tcn", 446)`, then run the cell.
 2. Run the check cell under it. It prints your score, its rank among all 20 possible 3-model ensembles, and whether your
+
    pick mixes both architectures.
 3. Try at least two picks, including one that mixes both architectures.
 4. Write down what changed, and why. Use ρ from step 5.
@@ -132,7 +134,7 @@ Limitations and tradeoffs:
 * **Cost.** M models take M× the training and prediction time.
 * **Near-copies add nothing.** If the members' errors are almost identical (ρ close to 1), you pay for M models and get one.
 * **Honest validation.** Fix the weights in advance (equal weights are a strong default) or cross-validate them. Tuning
-  them on the set you report makes the score optimistic.
+them on the set you report makes the score optimistic.
 * **Every member should be good on its own.** A weak member drags the average down.
 * **Spread is not calibrated uncertainty.** Members that share errors are overconfident together (bonus section B5).
 
@@ -154,9 +156,9 @@ before you look at the validation score; check the error correlation before addi
 ## Going further (optional)
 
 * **Bonus sections B1–B5** at the end of the tutorial notebook: lucky pairs, all 63 subsets, tuning the weight honestly,
-  the ambiguity decomposition, and where on the map the ensemble helps.
+the ambiguity decomposition, and where on the map the ensemble helps.
 * **More to try in notebook 02**: change the label noise, drop the neural net from the stack, or set
-  `max_features=None` in the random forest (which turns it back into plain bagging).
+`max_features=None` in the random forest (which turns it back into plain bagging).
 
 ## Troubleshooting
 
