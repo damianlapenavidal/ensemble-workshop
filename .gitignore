@@ -1,0 +1,24 @@
+# Python environments
+.venv/
+venv/
+
+# Python caches
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Jupyter temporary files
+.ipynb_checkpoints/
+
+# PowerPoint lock files and exports
+~$*.pptx
+slides/*.pdf
+
+# Archives of this folder
+*.zip
+
+# Operating-system and editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
