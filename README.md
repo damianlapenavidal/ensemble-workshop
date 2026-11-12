@@ -60,7 +60,7 @@ On Windows, if PowerShell refuses to run `Activate.ps1`, run `Set-ExecutionPolic
 once and try again.
 
 Then open `notebooks/01_tutorial_ocean_ensemble.ipynb` and run the cells from top to bottom with **Shift + Enter**.
-Both notebooks are saved **with their outputs**, so you can compare yours at any time, or simply read along.
+The notebooks are saved without outputs: run each step and compare your result with its ✅ checkpoint.
 
 ## Tutorial (notebook 01)
 

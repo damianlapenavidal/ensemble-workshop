@@ -22,3 +22,6 @@ slides/*.pdf
 Thumbs.db
 .vscode/
 .idea/
+
+# Facilitator guide
+FACILITATOR_GUIDE.md
